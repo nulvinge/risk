@@ -59,6 +59,19 @@ def lastSuccessfulLoginDate():
     else:
         return "No login"
 
+@app.route("/lastFailedLoginDate")
+def lastFailedLoginDate():
+    userid = request.args.get('username', '')
+
+    if not userid:
+        return "Invalid userid", 400
+
+    data = risk_model.getUserData(userid)
+    if data != None and data.lastFailed != None:
+        return data.lastFailed
+    else:
+        return "No login"
+
 if __name__ == "__main__":
     app.run()
 
