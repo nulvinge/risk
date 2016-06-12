@@ -37,7 +37,7 @@ class RiskTestCase(unittest.TestCase):
         return self.app.get('/isipknown?ip=' + ip, follow_redirects=True)
 
     def isipinternal(self, ip):
-        return self.app.get('/isipknown?ip=' + ip, follow_redirects=True)
+        return self.app.get('/isipinternal?ip=' + ip, follow_redirects=True)
 
     def test_isuserknown(self):
         rv = self.isuserknown_fail()
