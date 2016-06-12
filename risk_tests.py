@@ -36,6 +36,9 @@ class RiskTestCase(unittest.TestCase):
     def isipknown(self, ip):
         return self.app.get('/isipknown?ip=' + ip, follow_redirects=True)
 
+    def isipinternal(self, ip):
+        return self.app.get('/isipknown?ip=' + ip, follow_redirects=True)
+
     def test_isuserknown(self):
         rv = self.isuserknown_fail()
         assert rv.status_code == 400
@@ -74,6 +77,16 @@ class RiskTestCase(unittest.TestCase):
         assert 'false' in rv.data
         rv = self.isipknown(goodip)
         assert 'true' in rv.data
+
+    def test_isipinternal(self):
+        internal = "192.168.1.2"
+        external = "123.1.0.1"
+        rv = self.isipinternal('')
+        assert rv.status_code == 400
+        rv = self.isipinternal(internal)
+        assert 'true' in rv.data
+        rv = self.isipinternal(external)
+        assert 'false' in rv.data
 
 if __name__ == '__main__':
     unittest.main()
