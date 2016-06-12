@@ -46,6 +46,19 @@ def isIpInternal():
     else:
         return "false"
 
+@app.route("/lastSuccessfulLoginDate")
+def lastSuccessfulLoginDate():
+    userid = request.args.get('username', '')
+
+    if not userid:
+        return "Invalid userid", 400
+
+    data = risk_model.getUserData(userid)
+    if data != None and data.lastSuccessfull != None:
+        return data.lastSuccessfull
+    else:
+        return "No login"
+
 if __name__ == "__main__":
     app.run()
 
