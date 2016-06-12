@@ -14,16 +14,16 @@ class RiskTestCase(unittest.TestCase):
         pass
 
 
-    def successful(self, username="test", ip="123.123.123.123", time="20140616 09:02:46"):
+    def successful(self, username="test", ip="123.123.123.123", time="20140616 09:02:46", client='test'):
         return self.app.post('/log', data=dict(
-            msg="%s vm5 [4f8a7f94:533e22a7] sshd Accepted password for %s from %s port 57912 ssh2"
-                % (time, username, ip)
+            msg="%s vm5 [4f8a7f94:533e22a7] sshd Accepted password for %s from %s port 57912 ssh2 %s"
+                % (time, username, ip, client)
         ), follow_redirects=True)
 
-    def failed(self, username="test", ip="123.123.123.123", time="20140616 09:02:46"):
+    def failed(self, username="test", ip="123.123.123.123", time="20140616 09:02:46", client='test'):
         return self.app.post('/log', data=dict(
-            msg="%s vm5 [4f8a7f94:533e229c] sshd Failed none for invalid user %s from %s port 52753 ssh2"
-                % (time, username, ip)
+            msg="%s vm5 [4f8a7f94:533e229c] sshd Failed none for invalid user %s from %s port 52753 ssh2 %s"
+                % (time, username, ip, client)
         ), follow_redirects=True)
 
     def isuserknown_fail(self):
@@ -37,6 +37,9 @@ class RiskTestCase(unittest.TestCase):
 
     def isipknown(self, ip):
         return self.app.get('/isipknown?ip=' + ip, follow_redirects=True)
+
+    def isclientknown(self, client):
+        return self.app.get('/isclientknown?client=' + client, follow_redirects=True)
 
     def isipinternal(self, ip):
         return self.app.get('/isipinternal?ip=' + ip, follow_redirects=True)
@@ -87,6 +90,27 @@ class RiskTestCase(unittest.TestCase):
         rv = self.isipknown(noip)
         assert 'false' in rv.data
         rv = self.isipknown(goodip)
+        assert 'true' in rv.data
+
+    def test_isclientknown(self):
+        goodclient = "goodclient"
+        badclient = "badclient"
+        noclient = "noclient"
+        rv = self.isclientknown("")
+        assert rv.status_code == 400
+        rv = self.isclientknown(noclient)
+        assert 'false' in rv.data
+        rv = self.isclientknown(goodclient)
+        assert 'false' in rv.data
+        rv = self.successful(client=goodclient)
+        rv = self.isclientknown(goodclient)
+        assert 'true' in rv.data
+        rv = self.failed(client=badclient)
+        rv = self.isclientknown(badclient)
+        assert 'true' in rv.data
+        rv = self.isclientknown(noclient)
+        assert 'false' in rv.data
+        rv = self.isclientknown(goodclient)
         assert 'true' in rv.data
 
     def test_isipinternal(self):
