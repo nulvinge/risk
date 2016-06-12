@@ -1,21 +1,21 @@
 from flask import Flask, request
 app = Flask(__name__)
 
-#simulate db index
 class UserData:
-    def __init__():
+    """simulate db index for user logins"""
+    def __init__(self):
         self.lastSuccessfull = 0
         self.lastFailed = 0
 
 userData = {}
 
 def successfullLogin(userid, time):
-    if not userid in userData:
+    if userid not in userData:
         userData[userid] = UserData()
     userData[userid].lastSuccessfull = time
 
 def failedLogin(userid, time):
-    if not userid in userData:
+    if userid not in userData:
         userData[userid] = UserData()
     userData[userid].lastFailed = time
 
@@ -52,7 +52,7 @@ def isUserKnown():
     if not userid:
         return "Invalid userid", 400
 
-    if userid in userData:
+    if userid in userData and userData[userid].lastSuccessfull:
         return "true"
     else:
         return "false"
