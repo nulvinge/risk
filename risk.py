@@ -55,7 +55,7 @@ def lastSuccessfulLoginDate():
 
     data = risk_model.getUserData(userid)
     if data != None and data.lastSuccessful != None:
-        return data.lastSuccessful
+        return risk_model.timeToStr(data.lastSuccessful)
     else:
         return "No login"
 
@@ -68,10 +68,10 @@ def lastFailedLoginDate():
 
     data = risk_model.getUserData(userid)
     if data != None and data.lastFailed != None:
-        return data.lastFailed
+        return risk_model.timeToStr(data.lastFailed)
     else:
         return "No login"
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
 

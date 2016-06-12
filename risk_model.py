@@ -1,3 +1,5 @@
+from dateutil.parser import parse
+
 class UserData:
     """simulate db index for user logins"""
     def __init__(self):
@@ -36,7 +38,7 @@ def parseMsg(msg):
     """
 
     s = msg.split(' ')
-    time = s[0] + ' ' + s[1]
+    time = parse(s[0] + ' ' + s[1])
     if s[4] == "sshd":
         if s[5] == "Accepted":
             successfulLogin(time, s[8], s[10])
@@ -63,4 +65,7 @@ def isIpInternal(ip):
     elif ip.startswith("10."):
         return True
     return False
+
+def timeToStr(datetime):
+    return datetime.strftime("%Y%m%d %H:%M:%S")
 

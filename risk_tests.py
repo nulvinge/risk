@@ -2,6 +2,8 @@ import os
 import unittest
 import risk
 import tempfile
+from datetime import *
+from dateutil.relativedelta import *
 
 class RiskTestCase(unittest.TestCase):
 
@@ -44,6 +46,9 @@ class RiskTestCase(unittest.TestCase):
 
     def lastFailedLoginDate(self, username):
         return self.app.get('/lastFailedLoginDate?username=' + username, follow_redirects=True)
+
+    def failedLoginCountLastWeek(self):
+        return self.app.get('/failedLoginCountLastWeek', follow_redirects=True)
 
     def test_isuserknown(self):
         rv = self.isuserknown_fail()
@@ -142,6 +147,39 @@ class RiskTestCase(unittest.TestCase):
         assert time3 in rv.data
         rv = self.lastFailedLoginDate(user)
         assert time3 in rv.data
+
+    def test_failedLoginCountLastWeek(self):
+        user = 'failedloginuser'
+        now = datetime.now()
+        time1 = now - relativedelta(day=1)
+        time2 = now - relativedelta(day=2)
+        time3 = now - relativedelta(day=3)
+        time4 = now - relativedelta(day=4)
+        time5 = now - relativedelta(day=5)
+        time8 = now - relativedelta(day=8)
+        time9 = now - relativedelta(day=9)
+
+        rv = self.failedLoginCountLastWeek()
+        assert "0" in rv.data
+        rv = self.failed(user, time=time1)
+        rv = self.failedLoginCountLastWeek()
+        assert "1" in rv.data
+
+        rv = self.failed(user, time=time8)
+        rv = self.failedLoginCountLastWeek()
+        assert "1" in rv.data
+
+        rv = self.failed(user, time=time2)
+        rv = self.failedLoginCountLastWeek()
+        assert "2" in rv.data
+
+        rv = self.successful(user, time=time8)
+        rv = self.failedLoginCountLastWeek()
+        assert "2" in rv.data
+
+        rv = self.failed(user, time=time5)
+        rv = self.failedLoginCountLastWeek()
+        assert "3" in rv.data
 
 if __name__ == '__main__':
     unittest.main()
