@@ -12,7 +12,7 @@ class RiskTestCase(unittest.TestCase):
         pass
 
 
-    def successfull(self, username="test", ip="123.123.123.123", time="20140616 09:02:46"):
+    def successful(self, username="test", ip="123.123.123.123", time="20140616 09:02:46"):
         return self.app.post('/log', data=dict(
             msg="%s vm5 [4f8a7f94:533e22a7] sshd Accepted password for %s from %s port 57912 ssh2"
                 % (time, username, ip)
@@ -49,7 +49,7 @@ class RiskTestCase(unittest.TestCase):
         assert 'false' in rv.data
         rv = self.isuserknown("gooduser")
         assert 'false' in rv.data
-        rv = self.successfull("gooduser")
+        rv = self.successful("gooduser")
         rv = self.isuserknown("gooduser")
         assert 'true' in rv.data
         rv = self.failed("baduser")
@@ -70,7 +70,7 @@ class RiskTestCase(unittest.TestCase):
         assert 'false' in rv.data
         rv = self.isipknown(goodip)
         assert 'false' in rv.data
-        rv = self.successfull(ip=goodip)
+        rv = self.successful(ip=goodip)
         rv = self.isipknown(goodip)
         assert 'true' in rv.data
         rv = self.failed(ip=badip)
@@ -102,16 +102,16 @@ class RiskTestCase(unittest.TestCase):
         rv = self.failed(user, time=time1)
         rv = self.lastSuccessfulLoginDate(user)
         assert 'No login' in rv.data
-        rv = self.successfull(user, time=time1)
+        rv = self.successful(user, time=time1)
         rv = self.lastSuccessfulLoginDate(user)
         assert time1 in rv.data
         rv = self.failed(user, time=time2)
         rv = self.lastSuccessfulLoginDate(user)
         assert time1 in rv.data
-        rv = self.successfull(user, time=time2)
+        rv = self.successful(user, time=time2)
         rv = self.lastSuccessfulLoginDate(user)
         assert time2 in rv.data
-        rv = self.successfull(user, time=time3)
+        rv = self.successful(user, time=time3)
         rv = self.lastSuccessfulLoginDate(user)
         assert time3 in rv.data
 

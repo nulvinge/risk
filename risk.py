@@ -54,8 +54,8 @@ def lastSuccessfulLoginDate():
         return "Invalid userid", 400
 
     data = risk_model.getUserData(userid)
-    if data != None and data.lastSuccessfull != None:
-        return data.lastSuccessfull
+    if data != None and data.lastSuccessful != None:
+        return data.lastSuccessful
     else:
         return "No login"
 
