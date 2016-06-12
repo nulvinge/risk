@@ -42,6 +42,9 @@ class RiskTestCase(unittest.TestCase):
     def lastSuccessfulLoginDate(self, username):
         return self.app.get('/lastSuccessfulLoginDate?username=' + username, follow_redirects=True)
 
+    def lastFailedLoginDate(self, username):
+        return self.app.get('/lastFailedLoginDate?username=' + username, follow_redirects=True)
+
     def test_isuserknown(self):
         rv = self.isuserknown_fail()
         assert rv.status_code == 400
@@ -99,20 +102,45 @@ class RiskTestCase(unittest.TestCase):
         rv = self.lastSuccessfulLoginDate('')
         assert rv.status_code == 400
 
+        rv = self.lastSuccessfulLoginDate(user)
+        assert 'No login' in rv.data
+        rv = self.lastFailedLoginDate(user)
+        assert 'No login' in rv.data
+
         rv = self.failed(user, time=time1)
         rv = self.lastSuccessfulLoginDate(user)
         assert 'No login' in rv.data
+        rv = self.lastFailedLoginDate(user)
+        assert time1 in rv.data
+
         rv = self.successful(user, time=time1)
         rv = self.lastSuccessfulLoginDate(user)
         assert time1 in rv.data
+        rv = self.lastFailedLoginDate(user)
+        assert time1 in rv.data
+
         rv = self.failed(user, time=time2)
         rv = self.lastSuccessfulLoginDate(user)
         assert time1 in rv.data
+        rv = self.lastFailedLoginDate(user)
+        assert time2 in rv.data
+
         rv = self.successful(user, time=time2)
         rv = self.lastSuccessfulLoginDate(user)
         assert time2 in rv.data
+        rv = self.lastFailedLoginDate(user)
+        assert time2 in rv.data
+
         rv = self.successful(user, time=time3)
         rv = self.lastSuccessfulLoginDate(user)
+        assert time3 in rv.data
+        rv = self.lastFailedLoginDate(user)
+        assert time2 in rv.data
+
+        rv = self.failed(user, time=time3)
+        rv = self.lastSuccessfulLoginDate(user)
+        assert time3 in rv.data
+        rv = self.lastFailedLoginDate(user)
         assert time3 in rv.data
 
 if __name__ == '__main__':
