@@ -8,6 +8,7 @@ class UserData:
 
 userData = {}
 ips = {}
+failedLogins = []
 
 def successfulLogin(time, userid, ip):
     if userid not in userData:
@@ -21,6 +22,7 @@ def failedLogin(time, userid, ip):
     if userid not in userData:
         userData[userid] = UserData()
     userData[userid].lastFailed = time
+    failedLogins.append(time)
 
     if ip not in ips:
         ips[ip] = False #dummy value for set
@@ -68,4 +70,7 @@ def isIpInternal(ip):
 
 def timeToStr(datetime):
     return datetime.strftime("%Y%m%d %H:%M:%S")
+
+def getFailedLoginsBetween(time1, time2):
+    return len(filter(lambda t: time1 < t < time2, failedLogins))
 

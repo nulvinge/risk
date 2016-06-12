@@ -148,16 +148,19 @@ class RiskTestCase(unittest.TestCase):
         rv = self.lastFailedLoginDate(user)
         assert time3 in rv.data
 
+    def timeToStr(self,datetime):
+        return datetime.strftime("%Y%m%d %H:%M:%S")
+
     def test_failedLoginCountLastWeek(self):
         user = 'failedloginuser'
         now = datetime.now()
-        time1 = now - relativedelta(day=1)
-        time2 = now - relativedelta(day=2)
-        time3 = now - relativedelta(day=3)
-        time4 = now - relativedelta(day=4)
-        time5 = now - relativedelta(day=5)
-        time8 = now - relativedelta(day=8)
-        time9 = now - relativedelta(day=9)
+        time1 = self.timeToStr(now + relativedelta(days=-1))
+        time2 = self.timeToStr(now + relativedelta(days=-2))
+        time3 = self.timeToStr(now + relativedelta(days=-3))
+        time4 = self.timeToStr(now + relativedelta(days=-4))
+        time5 = self.timeToStr(now + relativedelta(days=-5))
+        time8 = self.timeToStr(now + relativedelta(days=-8))
+        time9 = self.timeToStr(now + relativedelta(days=-9))
 
         rv = self.failedLoginCountLastWeek()
         assert "0" in rv.data

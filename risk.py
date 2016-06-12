@@ -1,4 +1,6 @@
 import risk_model
+from datetime import *
+from dateutil.relativedelta import *
 from flask import Flask, request
 app = Flask(__name__)
 
@@ -71,6 +73,13 @@ def lastFailedLoginDate():
         return risk_model.timeToStr(data.lastFailed)
     else:
         return "No login"
+
+@app.route("/failedLoginCountLastWeek")
+def failedLoginCountLastWeek():
+    now = datetime.now()
+    lastWeek = now - relativedelta(days=7)
+
+    return str(risk_model.getFailedLoginsBetween(lastWeek, now))
 
 if __name__ == "__main__":
     app.run(debug=True)
