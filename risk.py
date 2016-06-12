@@ -4,17 +4,17 @@ app = Flask(__name__)
 class UserData:
     """simulate db index for user logins"""
     def __init__(self):
-        self.lastSuccessfull = 0
-        self.lastFailed = 0
+        self.lastSuccessfull = ""
+        self.lastFailed = ""
 
 userData = {}
 
-def successfullLogin(userid, time):
+def successfullLogin(time, userid):
     if userid not in userData:
         userData[userid] = UserData()
     userData[userid].lastSuccessfull = time
 
-def failedLogin(userid, time):
+def failedLogin(time, userid):
     if userid not in userData:
         userData[userid] = UserData()
     userData[userid].lastFailed = time
@@ -35,9 +35,9 @@ def parseMsg(msg):
     time = s[0] + ' ' + s[1]
     if s[4] == "sshd":
         if s[5] == "Accepted":
-            successfullLogin(s[8], time)
+            successfullLogin(time, s[8])
         elif s[5] == "Failed":
-            failedLogin(s[10], time)
+            failedLogin(time, s[10])
 
 @app.route("/log", methods=['POST'])
 def log():
