@@ -8,16 +8,23 @@ class UserData:
         self.lastFailed = ""
 
 userData = {}
+ips = {}
 
-def successfullLogin(time, userid):
+def successfullLogin(time, userid, ip):
     if userid not in userData:
         userData[userid] = UserData()
     userData[userid].lastSuccessfull = time
 
-def failedLogin(time, userid):
+    if ip not in ips:
+        ips[ip] = True #dummy value for set
+
+def failedLogin(time, userid, ip):
     if userid not in userData:
         userData[userid] = UserData()
     userData[userid].lastFailed = time
+
+    if ip not in ips:
+        ips[ip] = False #dummy value for set
 
 def parseMsg(msg):
     """Parses a log message and stores it
@@ -35,9 +42,9 @@ def parseMsg(msg):
     time = s[0] + ' ' + s[1]
     if s[4] == "sshd":
         if s[5] == "Accepted":
-            successfullLogin(time, s[8])
+            successfullLogin(time, s[8], s[10])
         elif s[5] == "Failed":
-            failedLogin(time, s[10])
+            failedLogin(time, s[10], s[12])
 
 @app.route("/log", methods=['POST'])
 def log():
@@ -53,6 +60,18 @@ def isUserKnown():
         return "Invalid userid", 400
 
     if userid in userData and userData[userid].lastSuccessfull:
+        return "true"
+    else:
+        return "false"
+
+@app.route("/isipknown")
+def isIpKnown():
+    ip = request.args.get('ip', '')
+
+    if not ip:
+        return "Invalid ip", 400
+
+    if ip in ips:
         return "true"
     else:
         return "false"
