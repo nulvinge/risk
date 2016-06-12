@@ -99,7 +99,7 @@ class RiskTestCase(unittest.TestCase):
         rv = self.isipinternal(external)
         assert 'false' in rv.data
 
-    def test_lastSuccessfulLoginDate(self):
+    def test_lastLoginDate(self):
         time1 = "20140618 09:02:46"
         time2 = "20140619 09:02:46"
         time3 = "20140620 09:02:46"
@@ -157,10 +157,8 @@ class RiskTestCase(unittest.TestCase):
         time1 = self.timeToStr(now + relativedelta(days=-1))
         time2 = self.timeToStr(now + relativedelta(days=-2))
         time3 = self.timeToStr(now + relativedelta(days=-3))
-        time4 = self.timeToStr(now + relativedelta(days=-4))
         time5 = self.timeToStr(now + relativedelta(days=-5))
         time8 = self.timeToStr(now + relativedelta(days=-8))
-        time9 = self.timeToStr(now + relativedelta(days=-9))
 
         rv = self.failedLoginCountLastWeek()
         assert "0" in rv.data
@@ -176,7 +174,7 @@ class RiskTestCase(unittest.TestCase):
         rv = self.failedLoginCountLastWeek()
         assert "2" in rv.data
 
-        rv = self.successful(user, time=time8)
+        rv = self.successful(user, time=time3)
         rv = self.failedLoginCountLastWeek()
         assert "2" in rv.data
 
