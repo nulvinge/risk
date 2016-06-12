@@ -51,7 +51,7 @@ class RiskTestCase(unittest.TestCase):
         assert 'true' in rv.data
         rv = self.failed("baduser")
         rv = self.isuserknown("baduser")
-        assert 'false' in rv.data
+        assert 'true' in rv.data
         rv = self.isuserknown("nouser")
         assert 'false' in rv.data
         rv = self.isuserknown("gooduser")
