@@ -54,3 +54,13 @@ def getIpData(ip):
         return ips[ip]
     else:
         return None
+
+def isIpInternal(ip):
+    if ip.startswith("192.168."):
+        return True
+    elif ip.startswith("127."):
+        return True
+    elif ip.startswith("10."):
+        return True
+    return False
+

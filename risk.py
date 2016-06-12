@@ -34,6 +34,18 @@ def isIpKnown():
     else:
         return "false"
 
+@app.route("/isipinternal")
+def isIpInternal():
+    ip = request.args.get('ip', '')
+
+    if not ip:
+        return "Invalid ip", 400
+
+    if risk_model.isIpInternal(ip):
+        return "true"
+    else:
+        return "false"
+
 if __name__ == "__main__":
     app.run()
 
