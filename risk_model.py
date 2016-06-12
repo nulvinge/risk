@@ -9,8 +9,9 @@ class UserData:
 userData = {}
 ips = {}
 failedLogins = []
+clients = {}
 
-def successfulLogin(time, userid, ip):
+def successfulLogin(time, userid, ip, client):
     if userid not in userData:
         userData[userid] = UserData()
     userData[userid].lastSuccessful = time
@@ -18,7 +19,10 @@ def successfulLogin(time, userid, ip):
     if ip not in ips:
         ips[ip] = True #dummy value for set
 
-def failedLogin(time, userid, ip):
+    if client not in clients:
+        clients[client] = True #dummy value for set
+
+def failedLogin(time, userid, ip, client):
     if userid not in userData:
         userData[userid] = UserData()
     userData[userid].lastFailed = time
@@ -27,14 +31,17 @@ def failedLogin(time, userid, ip):
     if ip not in ips:
         ips[ip] = False #dummy value for set
 
+    if client not in clients:
+        clients[client] = False #dummy value for set
+
 def parseMsg(msg):
     """Parses a log message and stores it
 
     Example parses of what we are looking for
     Successful
-    20140616 09:08:11 vm5 [4f8a7f94:533e22a7] sshd Accepted password for cryptzone from 112.196.12.67 port 57912 ssh2
+    20140616 09:08:11 vm5 [4f8a7f94:533e22a7] sshd Accepted password for cryptzone from 112.196.12.67 port 57912 ssh2 clientName
     Failed
-    20140616 09:02:46 vm5 [4f8a7f94:533e229c] sshd Failed none for invalid user root from 116.10.191.235 port 52753 ssh2
+    20140616 09:02:46 vm5 [4f8a7f94:533e229c] sshd Failed none for invalid user root from 116.10.191.235 port 52753 ssh2 clientName
 
     Use naive parsing for now
     """
@@ -43,9 +50,9 @@ def parseMsg(msg):
     time = parse(s[0] + ' ' + s[1])
     if s[4] == "sshd":
         if s[5] == "Accepted":
-            successfulLogin(time, s[8], s[10])
+            successfulLogin(time, s[8], s[10], s[14])
         elif s[5] == "Failed":
-            failedLogin(time, s[10], s[12])
+            failedLogin(time, s[10], s[12], s[16])
 
 def getUserData(userid):
     if userid in userData:
@@ -56,6 +63,12 @@ def getUserData(userid):
 def getIpData(ip):
     if ip in ips:
         return ips[ip]
+    else:
+        return None
+
+def getClientData(client):
+    if client in clients:
+        return clients[client]
     else:
         return None
 

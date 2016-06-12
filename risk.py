@@ -36,6 +36,19 @@ def isIpKnown():
     else:
         return "false"
 
+@app.route("/isclientknown")
+def isClientKnown():
+    client = request.args.get('client', '')
+
+    if not client:
+        return "Invalid ip", 400
+
+    data = risk_model.getClientData(client)
+    if data != None:
+        return "true"
+    else:
+        return "false"
+
 @app.route("/isipinternal")
 def isIpInternal():
     ip = request.args.get('ip', '')
